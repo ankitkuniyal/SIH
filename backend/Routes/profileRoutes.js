@@ -1,2 +1,2 @@
-import profileController from '../controllers/profileController.js';
+import profileController from '../Controllers/profileController.js';
 export default profileController;

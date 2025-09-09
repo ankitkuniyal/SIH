@@ -3,9 +3,9 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 
-import authRoutes from './Routes/authRoutes.js';
-import profileRoutes from './Routes/profileRoutes.js';
-import activityRoutes from './Routes/activityRoutes.js';
+// import authRoutes from './Routes/authRoutes.js';
+// import profileRoutes from './Routes/profileRoutes.js';
+// import activityRoutes from './Routes/activityRoutes.js';
 
 dotenv.config();
 
@@ -15,17 +15,17 @@ app.use(express.json());
 
 // MongoDB connect
 const MONGO_URI = process.env.MONGO_URI;
-mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(MONGO_URI)
   .then(()=> console.log('MongoDB connected'))
   .catch(err => {
     console.error('MongoDB connection error:', err);
     process.exit(1);
   });
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/profile', profileRoutes);
-app.use('/api/activity', activityRoutes);
+// // Routes
+// app.use('/api/auth', authRoutes);
+// app.use('/api/profile', profileRoutes);
+// app.use('/api/activity', activityRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, ()=> console.log(`Server running on port ${PORT}`));

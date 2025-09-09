@@ -1,2 +1,2 @@
-import activityController from '../controllers/activityController.js';
+import activityController from '../Controllers/activityController.js';
 export default activityController;
