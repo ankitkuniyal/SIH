@@ -169,6 +169,14 @@
 
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { initializeApp } from "firebase/app";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  linkWithPhoneNumber,
+  RecaptchaVerifier,
+} from "firebase/auth";
 import { auth } from '../firebase.js'; // Import your Firebase config
 const Step7Confirmation = ({ formData, onPrev }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -183,12 +191,13 @@ const Step7Confirmation = ({ formData, onPrev }) => {
       console.log(formData);
       await createUserWithEmailAndPassword(auth, email, phone);
       const user = auth.currentUser;
-      console.log('User created in Firebase:', user);
-      // Send all form data to backend
-      const response = await fetch('/api/register', {
+      const token = await user.getIdToken();
+
+      const response = await fetch('http://localhost:3000/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(formData)
       });

@@ -74,8 +74,8 @@ const Step4FarmDetails = ({ formData, updateFormData, onNext, onPrev }) => {
         <div className="form-group">
           <label>Unit / യൂണിറ്റ്</label>
           <select name="landUnit" value={formData.landUnit} onChange={handleChange}>
-            <option value="acres">Acres / ഏക്കർ</option>
-            <option value="hectares">Hectares / ഹെക്ടർ</option>
+            <option value="acre">Acres / ഏക്കർ</option>
+            <option value="hectare">Hectares / ഹെക്ടർ</option>
             <option value="cents">Cents / സെൻറ്</option>
           </select>
         </div>

@@ -3,7 +3,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 
-// import authRoutes from './Routes/authRoutes.js';
+import authRoutes from './Routes/authRoutes.js';
 // import profileRoutes from './Routes/profileRoutes.js';
 // import activityRoutes from './Routes/activityRoutes.js';
 
@@ -23,7 +23,7 @@ mongoose.connect(MONGO_URI)
   });
 
 // // Routes
-// app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 // app.use('/api/profile', profileRoutes);
 // app.use('/api/activity', activityRoutes);
 
