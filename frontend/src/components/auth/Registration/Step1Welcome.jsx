@@ -1,6 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Step1Welcome = ({ onNext }) => {
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    // Navigate to login page or main dashboard if already logged in
+    navigate('/');
+  };
+
   return (
     <div className="step-container welcome-page">
       <div className="welcome-content">
@@ -35,17 +43,15 @@ const Step1Welcome = ({ onNext }) => {
           Join thousands of Kerala farmers using Krishi Sakhi for better harvests!
         </p>
         <div className="button-row">
-  <button className="primary-btn full-btn" onClick={onNext}>
-    START REGISTRATION / <br />
-    രജിസ്ട്രേഷൻ ആരംഭിക്കുക
-  </button>
-  <button className="primary-btn full-btn" >
-    HAVE AN ACCOUNT? LOGIN / <br />
-    രജിസ്ട്രേഷൻ ആരംഭിക്കുക
-  </button>
-</div>
-
-
+          <button className="primary-btn full-btn" onClick={onNext}>
+            START REGISTRATION / <br />
+            രജിസ്ട്രേഷൻ ആരംഭിക്കുക
+          </button>
+          <button className="primary-btn full-btn" onClick={handleLogin}>
+            HAVE AN ACCOUNT? LOGIN / <br />
+            അക്കൗണ്ട് ഉണ്ടോ? ലോഗിൻ
+          </button>
+        </div>
       </div>
     </div> 
   );

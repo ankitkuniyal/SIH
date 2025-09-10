@@ -1,8 +1,8 @@
 /* Import Google Fonts for better typography */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* CSS Variables for consistent theming */
-:root {
+/* CSS Variables for consistent theming - SCOPED TO REGISTRATION */
+.registration-app {
   --primary-color: #2E7D32;
   --primary-light: #4CAF50;
   --primary-dark: #1B5E20;
@@ -51,15 +51,8 @@
   --transition-slow: 0.5s ease;
 }
 
-/* Reset and base styles */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Responsive body setup */
-html, body {
+/* SCOPED REGISTRATION WRAPPER */
+.registration-app {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: linear-gradient(135deg, var(--bg-page) 0%, #F1F8E9 100%);
   color: var(--text-primary);
@@ -68,15 +61,16 @@ html, body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-}
-
-/* Force light mode - Override any dark styles */
-html {
   color-scheme: light !important;
 }
 
-/* RESPONSIVE MAIN CONTAINER */
-.registration-container {
+/* Reset only within registration app */
+.registration-app * {
+  box-sizing: border-box;
+}
+
+/* SCOPED REGISTRATION CONTAINER */
+.registration-app .registration-container {
   width: 93%;
   max-width: 100%;
   margin: 0 auto;
