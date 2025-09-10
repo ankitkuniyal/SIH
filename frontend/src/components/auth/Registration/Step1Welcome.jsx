@@ -5,8 +5,8 @@ const Step1Welcome = ({ onNext }) => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    // Navigate to login page or main dashboard if already logged in
-    navigate('/');
+    // Navigate to login page
+    navigate('/login');
   };
 
   return (

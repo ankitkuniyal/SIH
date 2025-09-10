@@ -8,6 +8,7 @@ import { Activities } from "./components/Activities.jsx";
 import { Settings } from "./components/Settings.jsx";
 import { ChatScreen } from "./components/ChatScreen.jsx";
 import RegistrationFlow from "./components/auth/Registration/RegistrationFlow.jsx";
+import LoginPage from "./components/auth/Login/Login.jsx";
 
 function RoutesContainer() {
   const [farmerProfile, setFarmerProfile] = useState(null);
@@ -18,8 +19,9 @@ function RoutesContainer() {
 
     return (
     <Routes>
-      {/* Registration routes - without AppLayout (no bottom nav) */}
+      {/* Authentication routes - without AppLayout (no bottom nav) */}
       <Route path="/register/*" element={<RegistrationFlow />} />
+      <Route path="/login" element={<LoginPage />} />
       
       {/* Main app - unchanged */}
       <Route element={<AppLayout />}>
