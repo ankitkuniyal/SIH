@@ -7,15 +7,15 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     // Fetch Farmer by firebaseUid
-    const authHeader = req.headers.authorization;
+    // const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ error: "Authorization token required" });
-    }
+    // if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    //   return res.status(401).json({ error: "Authorization token required" });
+    // }
 
-    const token = authHeader.split("Bearer ")[1];
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    const firebaseUid = decodedToken.uid;
+    // const token = authHeader.split("Bearer ")[1];
+    // const decodedToken = await admin.auth().verifyIdToken(token);
+    const firebaseUid = 'hT3UXjAZ0zN8krYGlQVfCoUz4v03';
     const farmer = await Farmer.findOne({ firebaseUid });
     if (!farmer) {
       return res.status(404).json({ message: "Farmer not found" });

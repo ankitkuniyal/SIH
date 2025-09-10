@@ -1,218 +1,261 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card.jsx";
 import { Button } from "./ui/button.jsx";
 import { Input } from "./ui/input.jsx";
 import { Label } from "./ui/label.jsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select.jsx";
 import { useLanguage } from "../contexts/LanguageContext.jsx";
-import { User, MapPin, Crop, Droplets } from "lucide-react";
+import { User, MapPin, Crop, Droplets, Phone, Mail, Calendar, Home } from "lucide-react";
 
 export function ProfileSetup({ onProfileSave, existingProfile }) {
   const { t } = useLanguage();
   
-  const [profile, setProfile] = useState(existingProfile || {
-    name: "",
-    district: "",
-    landSize: "",
-    cropType: "",
-    soilType: "",
-    irrigationType: ""
-  });
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
-  const districts = [
-    'alappuzha', 'ernakulam', 'idukki', 'kannur', 'kasaragod', 'kollam',
-    'kottayam', 'kozhikode', 'malappuram', 'palakkad', 'pathanamthitta',
-    'thiruvananthapuram', 'thrissur', 'wayanad'
-  ];
+  // Fetch profile data from API
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:3000/api/profile');
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch profile: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setProfileData(data);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching profile:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const crops = [
-    'rice', 'coconut', 'pepper', 'cardamom', 'rubber', 'cashew',
-    'banana', 'ginger', 'turmeric', 'vegetables'
-  ];
+    fetchProfile();
+  }, []);
 
-  const soilTypes = [
-    'laterite', 'alluvial', 'black', 'red', 'clayey', 'sandy'
-  ];
+  // If loading, show loading state
+  if (loading) {
+    return (
+      <div className="p-4">
+        <Card className="rounded-lg border shadow-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="h-5 w-5 text-green-600" />
+              Loading Profile...
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-center p-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
-  const irrigationTypes = [
-    'drained', 'drip', 'sprinkler', 'flood'
-  ];
+  // If error, show error state
+  if (error) {
+    return (
+      <div className="p-4">
+        <Card className="rounded-lg border shadow-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-red-600">
+              <User className="h-5 w-5" />
+              Profile Error
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center p-8">
+              <p className="text-red-600 mb-4">Failed to load profile: {error}</p>
+              <Button onClick={() => window.location.reload()} variant="outline">
+                Try Again
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onProfileSave(profile);
-  };
-
-  const updateProfile = (field, value) => {
-    setProfile(prev => ({ ...prev, [field]: value }));
-  };
-
-  const isFormValid = Object.values(profile).every(value => value.trim() !== "");
+  const { farmer, farms } = profileData;
 
   return (
-    <div className="p-4">
-      <Card className="rounded-lg border shadow-sm overflow-hidden">
+    <div className="p-4 space-y-4">
+      {/* Farmer Profile Card */}
+      <Card className="rounded-lg border shadow-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5 text-green-600" />
-            {t('setupProfile')}
+            Farmer Profile
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Farmer Name */}
+        <CardContent className="space-y-4">
+          {/* Basic Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="name">
-                {t('language') === 'ml' ? 'പേര്' : t('language') === 'hi' ? 'नाम' : 'Name'}
+              <Label className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                <User className="h-4 w-4" />
+                Name
               </Label>
-              <Input
-                id="name"
-                value={profile.name}
-                onChange={(e) => updateProfile('name', e.target.value)}
-                placeholder={t('language') === 'ml' ? 'നിങ്ങളുടെ പേര്' : t('language') === 'hi' ? 'आपका नाम' : 'Enter your name'}
-              />
+              <p className="text-lg font-semibold">{farmer.name}</p>
             </div>
-
-            {/* District */}
+            
             <div className="space-y-2">
-              <Label className="flex items-center gap-2">
+              <Label className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                <Calendar className="h-4 w-4" />
+                Age
+              </Label>
+              <p className="text-lg">{farmer.age} years</p>
+            </div>
+          </div>
+
+          {/* Contact Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                <Phone className="h-4 w-4" />
+                Phone
+              </Label>
+              <p className="text-lg">{farmer.phone}</p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                <Mail className="h-4 w-4" />
+                Email
+              </Label>
+              <p className="text-lg">{farmer.email}</p>
+            </div>
+          </div>
+
+          {/* Location Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-sm font-medium text-gray-600">
                 <MapPin className="h-4 w-4" />
-                {t('location')}
+                Location
               </Label>
-              <Select value={profile.district} onValueChange={(value) => updateProfile('district', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('selectDistrict')} />
-                </SelectTrigger>
-                <SelectContent
-                  side="bottom"
-                  sideOffset={4}
-                  className="rounded-md border bg-neutral-900 text-neutral-100 shadow-md"
-                >
-                  {districts.map((district) => (
-                    <SelectItem
-                      key={district}
-                      value={district}
-                      className="data-[highlighted]:bg-neutral-800 data-[highlighted]:text-white data-[state=checked]:bg-neutral-800 focus:bg-neutral-800 focus:text-white"
-                    >
-                      {t(district)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <p className="text-lg">{farmer.village}, {farmer.district}</p>
+              <p className="text-sm text-gray-500">{farmer.state} - {farmer.pincode}</p>
             </div>
-
-            {/* Land Size */}
+            
             <div className="space-y-2">
-              <Label htmlFor="landSize">{t('landSize')}</Label>
-              <Input
-                id="landSize"
-                type="number"
-                step="0.1"
-                value={profile.landSize}
-                onChange={(e) => updateProfile('landSize', e.target.value)}
-                placeholder="0.5"
-              />
-            </div>
-
-            {/* Primary Crop */}
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2">
-                <Crop className="h-4 w-4" />
-                {t('cropType')}
+              <Label className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                <Home className="h-4 w-4" />
+                Language
               </Label>
-              <Select value={profile.cropType} onValueChange={(value) => updateProfile('cropType', value)}>
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={`${
-                      t('language') === 'ml' ? 'വിള തിരഞ്ഞെടുക്കുക' : t('language') === 'hi' ? 'फसल चुनें' : 'Select crop'
-                    }`}
-                  />
-                </SelectTrigger>
-                <SelectContent
-                  side="bottom"
-                  sideOffset={4}
-                  className="rounded-md border bg-neutral-900 text-neutral-100 shadow-md"
-                >
-                  {crops.map((crop) => (
-                    <SelectItem
-                      key={crop}
-                      value={crop}
-                      className="data-[highlighted]:bg-neutral-800 data-[highlighted]:text-white data-[state=checked]:bg-neutral-800 focus:bg-neutral-800 focus:text-white"
-                    >
-                      {t(crop)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <p className="text-lg capitalize">{farmer.language}</p>
             </div>
+          </div>
 
-            {/* Soil Type */}
-            <div className="space-y-2">
-              <Label>{t('soilType')}</Label>
-              <Select value={profile.soilType} onValueChange={(value) => updateProfile('soilType', value)}>
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={`${
-                      t('language') === 'ml' ? 'മണ്ണിന്റെ തരം തിരഞ്ഞെടുക്കുക' : t('language') === 'hi' ? 'मिट्टी का प्रकार चुनें' : 'Select soil type'
-                    }`}
-                  />
-                </SelectTrigger>
-                <SelectContent
-                  side="bottom"
-                  sideOffset={4}
-                  className="rounded-md border bg-neutral-900 text-neutral-100 shadow-md"
-                >
-                  {soilTypes.map((soil) => (
-                    <SelectItem
-                      key={soil}
-                      value={soil}
-                      className="data-[highlighted]:bg-neutral-800 data-[highlighted]:text-white data-[state=checked]:bg-neutral-800 focus:bg-neutral-800 focus:text-white"
-                    >
-                      {t(soil)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Irrigation Type */}
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2">
-                <Droplets className="h-4 w-4" />
-                {t('irrigationType')}
-              </Label>
-              <Select value={profile.irrigationType} onValueChange={(value) => updateProfile('irrigationType', value)}>
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={`${
-                      t('language') === 'ml' ? 'ജലസേചന രീതി തിരഞ്ഞെടുക്കുക' : t('language') === 'hi' ? 'सिंचाई प्रकार चुनें' : 'Select irrigation type'
-                    }`}
-                  />
-                </SelectTrigger>
-                <SelectContent
-                  side="bottom"
-                  sideOffset={4}
-                  className="rounded-md border bg-neutral-900 text-neutral-100 shadow-md"
-                >
-                  {irrigationTypes.map((irrigation) => (
-                    <SelectItem
-                      key={irrigation}
-                      value={irrigation}
-                      className="data-[highlighted]:bg-neutral-800 data-[highlighted]:text-white data-[state=checked]:bg-neutral-800 focus:bg-neutral-800 focus:text-white"
-                    >
-                      {t(irrigation)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <Button type="submit" className="w-full" disabled={!isFormValid}>
-              {t('save')}
-            </Button>
-          </form>
+          {/* Experience */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-gray-600">Experience</Label>
+            <p className="text-lg">{farmer.experience}</p>
+          </div>
         </CardContent>
       </Card>
+
+      {/* Farm Details Card */}
+      {farms && farms.length > 0 && (
+        <Card className="rounded-lg border shadow-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Crop className="h-5 w-5 text-green-600" />
+              Farm Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {farms.map((farm, index) => (
+              <div key={farm._id || index} className="space-y-4 pb-4 border-b border-gray-200 last:border-b-0 last:pb-0">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-600">Land Size</Label>
+                    <p className="text-lg">{farm.landSize} {farm.landUnit}</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-600">Soil Type</Label>
+                    <p className="text-lg capitalize">{farm.soilType}</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                      <Droplets className="h-4 w-4" />
+                      Irrigation
+                    </Label>
+                    <p className="text-lg capitalize">{farm.irrigationType}</p>
+                  </div>
+                </div>
+
+                {farm.waterSource && (
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-600">Water Source</Label>
+                    <p className="text-lg capitalize">{farm.waterSource}</p>
+                  </div>
+                )}
+
+                {(farm.primaryCrops && farm.primaryCrops.length > 0) && (
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-600">Primary Crops</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {farm.primaryCrops.map((crop, cropIndex) => (
+                        <span 
+                          key={cropIndex}
+                          className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm capitalize"
+                        >
+                          {crop}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {(farm.secondaryCrops && farm.secondaryCrops.length > 0) && (
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-600">Secondary Crops</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {farm.secondaryCrops.map((crop, cropIndex) => (
+                        <span 
+                          key={cropIndex}
+                          className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm capitalize"
+                        >
+                          {crop}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Action Buttons */}
+      <div className="flex gap-2">
+        <Button 
+          onClick={() => setIsEditing(true)} 
+          className="flex-1"
+          variant="outline"
+        >
+          Edit Profile
+        </Button>
+        <Button 
+          onClick={() => window.location.reload()} 
+          variant="outline"
+        >
+          Refresh
+        </Button>
+      </div>
     </div>
   );
 }
