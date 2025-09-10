@@ -1,20 +1,21 @@
+// models/Farmer.js
 import mongoose from 'mongoose';
-const { Schema, model } = mongoose;
 
-const FarmerSchema = new Schema({
-  firebaseUid: { type: String, required: true, unique: true }, // Unique identifier from Firebase
-  name: String, // Farmer's name
-  email: String, // Contact email
-  phone: String, // Contact phone number
-  age: Number, // Farmer's age
-  language: { type: String, enum: ['ml','en','hi'], default: 'ml' }, // Preferred language
-  experience: String, // Farming experience level
-  district: String, // General location
-  state: String, // General location
-  village: String, // General location
-  pincode: String, // Postal code
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-});
+const farmerSchema = new mongoose.Schema({
+  firebaseUid: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  phone: { type: String, required: true },
+  age: Number,
+  language: { type: String, enum: ['ml', 'en', 'hi'], default: 'ml' },
+  experience: String,
+  district: String,
+  state: String,
+  village: String,
+  pincode: String
+}, { timestamps: true });
 
-export default model('Farmer', FarmerSchema);
+// Check if model already exists before creating it
+const Farmer = mongoose.models.Farmer || mongoose.model('Farmer', farmerSchema);
+
+export default Farmer;

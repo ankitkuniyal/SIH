@@ -1,14 +1,14 @@
+// models/Farm.js
 import mongoose from 'mongoose';
-const { Schema, model } = mongoose;
 
-const FarmSchema = new Schema({
-  farmer: { type: Schema.Types.ObjectId, ref: 'Farmer', required: true },
+const farmSchema = new mongoose.Schema({
+  farmer: { type: mongoose.Schema.Types.ObjectId, ref: 'Farmer', required: true },
   coordinates: {
     lat: { type: Number, required: true },
     lng: { type: Number, required: true }
   },
   landSize: { type: Number, required: true },
-  landUnit: { type: String, enum: ['acre', 'hectare', 'cents'], default: 'acre', required: true },
+  landUnit: { type: String, enum: ['acre', 'hectare'], default: 'acre', required: true },
   soilType: { type: String, required: true },
   waterSource: { type: String, required: true },
   irrigationType: { type: String, required: true },
@@ -17,8 +17,10 @@ const FarmSchema = new Schema({
   pesticides: [{ type: String }],
   primaryCrops: [{ type: String }],
   secondaryCrops: [{ type: String }],
-  seasonalPattern: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
-});
+  seasonalPattern: { type: String, required: true }
+}, { timestamps: true });
 
-export default model('Farm', FarmSchema);
+// Check if model already exists before creating it
+const Farm = mongoose.models.Farm || mongoose.model('Farm', farmSchema);
+
+export default Farm;
