@@ -11,7 +11,18 @@ import activityRoutes from './Routes/activityRoutes.js';
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+// CORS configuration
+const corsOptions = {
+  origin: [
+    'http://localhost:5173', // Vite dev server
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true, // Allow cookies and authorization headers
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // MongoDB connect
