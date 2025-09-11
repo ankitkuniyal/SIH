@@ -16,6 +16,7 @@ const app = express();
 const corsOptions = {
   origin: [
     'http://localhost:5174', // Vite dev server
+    'https://sih-1-4cqv.onrender.com'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
