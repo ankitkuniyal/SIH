@@ -1,5 +1,5 @@
 import express from 'express';
-import Activity from '../models/Activity.js';
+import Activity from '../Models/Activity.js';
 
 
 const router = express.Router();
@@ -26,7 +26,7 @@ router.get('/', async (req, res) => {
     // }
     const firebaseUid = "c7rmijPo3baMJd5YFcj4oofaRwa2";
     // Find farmer by firebaseUid
-    const Farmer = (await import('../models/Farmer.js')).default;
+    const Farmer = (await import('../Models/Farmer.js')).default;
     const farmerDoc = await Farmer.findOne({ firebaseUid });
     if (!farmerDoc) {
       return res.status(404).json({ error: 'Farmer not found' });

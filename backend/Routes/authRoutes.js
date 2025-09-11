@@ -1,6 +1,6 @@
 import express from 'express';
-import Farmer from '../models/Farmer.js';
-import Farm from '../models/Farm.js';
+import Farmer from '../Models/Farmer.js';
+import Farm from '../Models/Farm.js';
 import admin from "../firebaseAdmin.js"
 
 const router = express.Router();
