@@ -6,7 +6,7 @@ const LanguageContext = createContext(undefined);
 const translations = {
   en: {
     // App branding
-    appName: "കൃഷി സഹായി", // Krishi Sahayi in Malayalam script
+    appName: "Krishi Sakhi", // Krishi Sahayi in Malayalam script
     tagline: "Your AI-powered farming companion",
     
     // Navigation
@@ -98,7 +98,7 @@ const translations = {
     harvesting: "Harvesting",
     
     // Dashboard
-    welcomeBack: "Welcome back",
+    welcomeBack: "Welcome! 👋🏽 ",
     farmerName: "Farmer",
     weatherToday: "Today's Weather",
     upcomingTasks: "Upcoming Tasks",
@@ -215,7 +215,7 @@ const translations = {
     harvesting: "വിളവെടുപ്പ്",
     
     // Dashboard
-    welcomeBack: "തിരികെ സ്വാഗതം",
+    welcomeBack: "സ്വാഗതം",
     farmerName: "കർഷകൻ",
     weatherToday: "ഇന്നത്തെ കാലാവസ്ഥ",
     upcomingTasks: "വരാനിരിക്കുന്ന ജോലികൾ",
@@ -332,7 +332,7 @@ const translations = {
     harvesting: "कटाई",
     
     // Dashboard
-    welcomeBack: "वापस स्वागत है",
+    welcomeBack: "नमस्ते! 👋🏽 ",
     farmerName: "किसान",
     weatherToday: "आज का मौसम",
     upcomingTasks: "आगामी कार्य",

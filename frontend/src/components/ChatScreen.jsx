@@ -152,7 +152,42 @@ export function ChatScreen() {
     setMessages((prev) => [...prev, userMessage]);
     setIsTyping(true);
 
-    setTimeout(() => {
+    try {
+      // Call the AI API
+      const response = await fetch('http://localhost:3000/api/ai/gemini', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: messageText
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const aiResponse = await response.json();
+      
+      const botMessage = {
+        id: (Date.now() + 1).toString(),
+        message: aiResponse.chatResponse || aiResponse.advisory || 'Sorry, I couldn\'t process your request.',
+        isBot: true,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        confidence: 0.95,
+        advisory: aiResponse.advisory,
+      };
+
+      setMessages((prev) => [...prev, botMessage]);
+      setIsTyping(false);
+    } catch (error) {
+      console.error('Error calling AI API:', error);
+      
+      // Fallback to local responses if API fails
       const botResponseData = generateBotResponse(messageText);
       const botMessage = {
         id: (Date.now() + 1).toString(),
@@ -163,11 +198,12 @@ export function ChatScreen() {
           minute: "2-digit",
         }),
         confidence: botResponseData.confidence,
+        isOffline: true,
       };
 
       setMessages((prev) => [...prev, botMessage]);
       setIsTyping(false);
-    }, 1500 + Math.random() * 1000);
+    }
   };
 
   return (
@@ -184,6 +220,8 @@ export function ChatScreen() {
               isBot={message.isBot}
               timestamp={message.timestamp}
               confidence={message.confidence}
+              advisory={message.advisory}
+              isOffline={message.isOffline}
             />
           ))}
 

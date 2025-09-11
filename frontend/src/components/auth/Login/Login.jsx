@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -9,6 +10,7 @@ import {
 import { auth } from '../firebase';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState('login'); // 'login' or 'welcome'
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -78,19 +80,7 @@ const LoginPage = () => {
   };
 
   const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      setStep('login');
-      setEmail('');
-      setPhone('');
-      setPassword('');
-      setConfirmPassword('');
-      setIsSignUp(false);
-      setError('');
-      setUser(null);
-    } catch (err) {
-      console.error('Logout error:', err);
-    }
+    navigate('/')
   };
 
   const renderForm = () => (
@@ -187,7 +177,7 @@ const LoginPage = () => {
             onClick={handleLogout} 
             className="mt-6 w-full py-3 bg-gradient-to-r from-green-700 to-green-400 hover:from-green-800 hover:to-green-500 text-white font-semibold rounded-md shadow-md"
           >
-            Logout
+            To Dashboard
           </button>
         </div>
       </div>

@@ -88,7 +88,7 @@ const Step2FarmerDetails = ({ formData, updateFormData, onNext, onPrev }) => {
         <label>Preferred Language / ഭാഷ</label>
         <select name="language" value={formData.language} onChange={handleChange}>
           <option value="ml">Malayalam / മലയാളം</option>
-          <option value="hn">Hindi</option>
+          <option value="hi">Hindi</option>
           <option value="en">English</option>
         </select>
       </div>

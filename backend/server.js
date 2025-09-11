@@ -15,7 +15,7 @@ const app = express();
 // CORS configuration
 const corsOptions = {
   origin: [
-    'http://localhost:5173', // Vite dev server
+    'http://localhost:5174', // Vite dev server
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],

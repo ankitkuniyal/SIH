@@ -15,10 +15,10 @@ const Step1Welcome = ({ onNext }) => {
         <h1>🌱 Krishi Sakhi വിലകോം</h1>
         <h2>Your Digital Farming Companion</h2>
         
-        <div className="language-toggle">
+        {/* <div className="language-toggle">
           <button className="lang-btn active">മലയാളം</button>
           <button className="lang-btn">English</button>
-        </div>
+        </div> */}
         
         <div className="benefits-list">
           <div className="benefit-item">

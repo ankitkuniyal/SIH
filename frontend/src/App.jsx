@@ -9,6 +9,7 @@ import { Settings } from "./components/Settings.jsx";
 import { ChatScreen } from "./components/ChatScreen.jsx";
 import RegistrationFlow from "./components/auth/Registration/RegistrationFlow.jsx";
 import LoginPage from "./components/auth/Login/Login.jsx";
+import News from "./components/News.jsx";
 
 function RoutesContainer() {
   const [farmerProfile, setFarmerProfile] = useState(null);
@@ -28,6 +29,7 @@ function RoutesContainer() {
         <Route path="/" element={<Dashboard farmerName={farmerProfile?.name} />} />
         <Route path="/chat" element={<ChatScreen />} />
         <Route path="/activities" element={<Activities />} />
+        <Route path="/news" element={<News />} />
         <Route
           path="/profile"
           element={

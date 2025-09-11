@@ -312,14 +312,7 @@ export function Settings() {
             <h1 className="text-2xl font-semibold text-gray-900">{t('settings')}</h1>
             <p className="text-gray-600 mt-1">Manage your app preferences</p>
           </div>
-          <Button 
-            onClick={handleSignOut}
-            variant="outline"
-            className="w-full flex items-center justify-center gap-2 border-red-200 text-red-600 hover:bg-red-50 h-12 active:scale-95 transition-transform"
-          >
-            <LogOut className="h-4 w-4" />
-            Sign Out
-          </Button>
+         
         </div>
 
         {/* Language Settings */}
@@ -510,41 +503,59 @@ export function Settings() {
         </Card>
 
         {/* Support & Info */}
-        <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-          <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
-            <CardTitle className="flex items-center gap-2 text-green-800">
-              <HelpCircle className="h-5 w-5" />
-              {language === 'ml' ? 'സഹായവും വിവരങ്ങളും' :
-               language === 'hi' ? 'सहायता और जानकारी' :
-               'Support & Information'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6 space-y-3">
-            <Button variant="outline" className="w-full justify-start border-gray-200 hover:bg-green-50" size="sm">
-              <HelpCircle className="h-4 w-4 mr-2" />
-              {language === 'ml' ? 'സഹായം ലഭിക്കുക' :
-               language === 'hi' ? 'सहायता प्राप्त करें' :
-               'Get Help'}
-            </Button>
-            
-            <Button variant="outline" className="w-full justify-start border-gray-200 hover:bg-green-50" size="sm">
-              <Info className="h-4 w-4 mr-2" />
-              {language === 'ml' ? 'ആപ്പിനെക്കുറിച്ച്' :
-               language === 'hi' ? 'ऐप के बारे में' :
-               'About App'}
-            </Button>
+          <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+            <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
+              <CardTitle className="flex items-center gap-2 text-green-800">
+                <HelpCircle className="h-5 w-5" />
+                {language === 'ml' ? 'സഹായവും വിവരങ്ങളും' :
+                 language === 'hi' ? 'सहायता और जानकारी' :
+                 'Support & Information'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-3">
+              <Button variant="outline" className="w-full justify-start border-gray-200 hover:bg-green-50" size="sm">
+                <HelpCircle className="h-4 w-4 mr-2" />
+                {language === 'ml' ? 'സഹായം ലഭിക്കുക' :
+                 language === 'hi' ? 'सहायता प्राप्त करें' :
+                 'Get Help'}
+              </Button>
+              
+              <Button variant="outline" className="w-full justify-start border-gray-200 hover:bg-green-50" size="sm">
+                <Info className="h-4 w-4 mr-2" />
+                {language === 'ml' ? 'ആപ്പിനെക്കുറിച്ച്' :
+                 language === 'hi' ? 'ऐप के बारे में' :
+                 'About App'}
+              </Button>
 
-            <Button variant="outline" className="w-full justify-start border-gray-200 hover:bg-green-50" size="sm">
-              <Shield className="h-4 w-4 mr-2" />
-              {language === 'ml' ? 'സ്വകാര്യതാ നയം' :
-               language === 'hi' ? 'गोपनीयता नीति' :
-               'Privacy Policy'}
-            </Button>
-          </CardContent>
-        </Card>
+              <Button variant="outline" className="w-full justify-start border-gray-200 hover:bg-green-50" size="sm">
+                <Shield className="h-4 w-4 mr-2" />
+                {language === 'ml' ? 'സ്വകാര്യതാ നയം' :
+                 language === 'hi' ? 'गोपनीयता नीति' :
+                 'Privacy Policy'}
+              </Button>
+            </CardContent>
+          </Card>
+          <Button 
+            onClick={async () => {
+              if (window.gapi && window.gapi.auth2) {
+                const auth2 = window.gapi.auth2.getAuthInstance();
+                if (auth2) {
+            await auth2.signOut();
+            await auth2.disconnect();
+                }
+              }
+              // Optionally clear local app state, redirect, etc.
+              handleSignOut();
+            }}
+            variant="outline"
+            className="w-full flex items-center justify-center gap-2 bg-white border-amber-50 text-red-600 hover:bg-red-50 h-12 active:scale-95 transition-transform"
+          >
+            <LogOut className="h-4 w-4 border-b-amber-50" />
+            Sign Out
+          </Button>
 
-        {/* App Info */}
-        <Card className="shadow-lg border-0 bg-gradient-to-r from-green-100 to-emerald-100">
+          {/* App Info */}
+        <Card className="shadow-lg border-0 bg-gradient-to-r from-green-100 to-emerald-100 mb-5">
           <CardContent className="p-6 text-center">
             <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">🌱</span>
@@ -562,6 +573,7 @@ export function Settings() {
             </p>
           </CardContent>
         </Card>
+        
       </div>
     </div>
   );

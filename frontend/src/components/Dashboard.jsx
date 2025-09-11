@@ -24,6 +24,11 @@ export function Dashboard({ farmerName, onTabChange }) {
   const [weatherLoading, setWeatherLoading] = useState(true);
   const [weatherError, setWeatherError] = useState(null);
 
+  // Profile state
+  const [profileData, setProfileData] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [profileError, setProfileError] = useState(null);
+
   // Language options for news
   const newsLanguageOptions = [
     { code: 'en', name: 'English', flag: '🇬🇧' },
@@ -87,14 +92,55 @@ export function Dashboard({ farmerName, onTabChange }) {
     };
   };
 
-  // Fetch weather data
+  // Fetch profile data first
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setProfileLoading(true);
+        setProfileError(null);
+        const response = await fetch('http://localhost:3000/api/profile');
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch profile: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setProfileData(data);
+        console.log('Profile data fetched:', data);
+      } catch (err) {
+        console.error('Error fetching profile:', err);
+        setProfileError(err.message);
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  // Fetch weather data using coordinates from profile
   useEffect(() => {
     const fetchWeather = async () => {
       try {
         setWeatherLoading(true);
-        // Hardcoded coordinates for Kerala (Kochi area)
-        const latitude = 9.9312;
-        const longitude = 76.2673;
+        setWeatherError(null);
+        
+        // Get coordinates from profile data
+        let latitude = 9.9312; // Default Kerala coordinates
+        let longitude = 76.2673;
+        
+        if (profileData?.farms && profileData.farms.length > 0) {
+          const farm = profileData.farms[0];
+          if (farm.coordinates?.lat && farm.coordinates?.lng) {
+            latitude = farm.coordinates.lat;
+            longitude = farm.coordinates.lng;
+            console.log('Using farm coordinates:', latitude, longitude);
+          } else {
+            console.log('No farm coordinates found, using default Kerala coordinates');
+          }
+        } else {
+          console.log('No farm data found, using default Kerala coordinates');
+        }
         
         const weatherData = await getWeatherForecast(latitude, longitude);
         const processedWeather = processWeatherData(weatherData);
@@ -112,8 +158,11 @@ export function Dashboard({ farmerName, onTabChange }) {
       }
     };
 
-    fetchWeather();
-  }, []);
+    // Only fetch weather after profile data is loaded (or failed to load)
+    if (!profileLoading) {
+      fetchWeather();
+    }
+  }, [profileData, profileLoading]);
 
   // Fetch agriculture news
   useEffect(() => {
@@ -174,19 +223,22 @@ export function Dashboard({ farmerName, onTabChange }) {
                 <span className="text-2xl" onClick={() => navigate('/profile')}>👨‍🌾</span>
               </div>
               <div className="flex-1">
-                <h2
-                  className="text-xl font-bold cursor-pointer hover:text-green-100 transition-colors"
+                <div className="flex justify-start">
+                  <h2
+                  className="text-xl font-bold  cursor-pointer hover:text-green-100 transition-colors text-left"
                   onClick={() => onTabChange && onTabChange('profile')}
                 >
                   {t('welcomeBack')}
                 </h2>
-                <p className="text-green-100 text-sm">
+                </div>
+                
+                <p className="text-green-100 text-sm text-left">
                   {farmerName || t('farmerName')} • കൃഷി സഹായി
                 </p>
               </div>
             </div>
             <div className="rounded-xl overflow-hidden shadow-lg ring-1 ring-white/20">
-              <ImageWithFallback
+              <img
                 src="https://images.unsplash.com/photo-1625110110679-f0a5659e32b4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZXJhbGElMjBmYXJtaW5nJTIwYWdyaWN1bHR1cmUlMjBwYWRkeXxlbnwxfHx8fDE3NTc0MDM3OTd8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
                 alt="Kerala farming"
                 className="w-full h-32 object-cover"
@@ -203,7 +255,14 @@ export function Dashboard({ farmerName, onTabChange }) {
                 <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
                   <Sun className="h-5 w-5 text-yellow-600" />
                 </div>
-                <span className="text-gray-800 font-semibold">{t('weatherToday')}</span>
+                <div className="flex flex-col">
+                  <span className="text-gray-800 font-semibold">{t('weatherToday')}</span>
+                  {profileData?.farmer?.district && (
+                    <span className="text-xs text-gray-500">
+                      {profileData.farmer.district}, {profileData.farmer.state}
+                    </span>
+                  )}
+                </div>
               </div>
               <Badge className="bg-red-500 text-white">Live</Badge>
             </CardTitle>
@@ -224,6 +283,11 @@ export function Dashboard({ farmerName, onTabChange }) {
                   <p className="text-sm">
                     {language === 'ml' ? 'കാലാവസ്ഥ ഡാറ്റ ലോഡ് ചെയ്യാൻ കഴിഞ്ഞില്ല' : language === 'hi' ? 'मौसम डेटा लोड नहीं हो सका' : 'Failed to load weather data'}
                   </p>
+                  {profileError && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {language === 'ml' ? 'ഡിഫോൾട്ട് ലൊക്കേഷൻ ഉപയോഗിച്ചു' : language === 'hi' ? 'डिफ़ॉल्ट स्थान का उपयोग किया गया' : 'Using default location'}
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -238,6 +302,11 @@ export function Dashboard({ farmerName, onTabChange }) {
                       <div>
                         <p className="text-3xl font-bold text-gray-800">{weather.temp}°</p>
                         <p className="text-sm text-gray-600 font-medium">{weather.condition}</p>
+                        {profileData?.farmer?.district && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            📍 {profileData.farmer.district}, {profileData.farmer.state}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -294,7 +363,7 @@ export function Dashboard({ farmerName, onTabChange }) {
               
               {/* Language Dropdown */}
               <div className="relative">
-                <button
+                {/* <button
                   onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
                   className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg border transition-colors"
                 >
@@ -303,7 +372,7 @@ export function Dashboard({ farmerName, onTabChange }) {
                   </span>
                   <span className="font-medium">{selectedNewsLanguage}</span>
                   <ChevronDown className={`h-3 w-3 transition-transform ${showLanguageDropdown ? 'rotate-180' : ''}`} />
-                </button>
+                </button> */}
                 
                 {showLanguageDropdown && (
                   <div className="absolute right-0 top-full mt-1 bg-white border rounded-lg shadow-lg z-10 min-w-[120px]">
@@ -393,13 +462,13 @@ export function Dashboard({ farmerName, onTabChange }) {
               </div>
             ))}
             
-            <Button className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 rounded-xl shadow-md">
+            <Button className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 rounded-xl shadow-md" onClick={() => navigate('/news')}>
               {language === 'ml' ? "കൂടുതൽ കാണുക" : language === 'hi' ? "और देखें" : "View More"}
             </Button>
           </CardContent>
         </Card>
 
-        {/* Recent Advice - Enhanced */}
+        {/* Recent Advice - Enhanced
         <Card className="border-0 shadow-lg bg-white">
           <CardHeader className="pb-3 bg-gradient-to-r from-emerald-50 to-green-50 rounded-t-lg">
             <CardTitle className="flex items-center gap-2">
@@ -432,10 +501,10 @@ export function Dashboard({ farmerName, onTabChange }) {
               </div>
             ))}
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Bottom Spacing */}
-        <div className="h-18"></div>
+        <div className="h-5"></div>
       </div>
     </div>
   );

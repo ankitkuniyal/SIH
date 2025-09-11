@@ -166,7 +166,7 @@ You are **Krishi Sakhi**, an agriculture and farming expert who acts as a person
 - The response should feel like it is coming from a friendly expert giving direct, practical advice.
 - Give less importance to primary and secondary crops, and more importance to query, act like a normal human hot constantly having to reply related to agriculture.
 - Don't update the activity log based in previous activity log data its just for reference so that you can communicate properly.
-
+- Reply in the language in which the farmer has asked the question in.
 Output only JSON in this exact format:
 
 {
@@ -188,15 +188,27 @@ Output only JSON in this exact format:
 
     let aiResponseText = geminiResp.data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
-    // 5. Clean output
+// 5. Clean output
     aiResponseText = aiResponseText.replace(/```json|```/g, '').trim();
 
     let aiResponse;
     try {
+      // Try normal JSON parse first
       aiResponse = JSON.parse(aiResponseText);
     } catch (err) {
-      console.error('Failed to parse Gemini response:', aiResponseText);
-      return res.status(500).json({ error: 'Invalid AI response', raw: aiResponseText });
+      // If failed, try to extract JSON object from text (for Malayalam or other non-strict responses)
+      const jsonMatch = aiResponseText.match(/{[\s\S]*}/);
+      if (jsonMatch) {
+        try {
+          aiResponse = JSON.parse(jsonMatch[0]);
+        } catch (err2) {
+          console.error('Failed to parse Gemini response (extracted JSON):', jsonMatch[0]);
+          return res.status(500).json({ error: 'Invalid AI response', raw: aiResponseText });
+        }
+      } else {
+        console.error('Failed to parse Gemini response:', aiResponseText);
+        return res.status(500).json({ error: 'Invalid AI response', raw: aiResponseText });
+      }
     }
 
     console.log('ID:', farmer.id, farm?._id);

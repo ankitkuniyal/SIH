@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
 
     // const token = authHeader.split("Bearer ")[1];
     // const decodedToken = await admin.auth().verifyIdToken(token);
-    const firebaseUid = 'hT3UXjAZ0zN8krYGlQVfCoUz4v03';
+    const firebaseUid = 'c7rmijPo3baMJd5YFcj4oofaRwa2';
     const farmer = await Farmer.findOne({ firebaseUid });
     if (!farmer) {
       return res.status(404).json({ message: "Farmer not found" });

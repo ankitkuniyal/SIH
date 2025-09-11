@@ -37,7 +37,7 @@ export function AppLayout() {
       : location.pathname.slice(1); // "chat" | "activities" | "profile" | "settings"
 
   return (
-    <div className="h-screen flex flex-col bg-white">
+    <div className="h-f flex flex-col bg-white">
       {showChatHeader && <ChatHeader />}
       <div className="flex-1 flex flex-col min-h-0">
         <Outlet />
