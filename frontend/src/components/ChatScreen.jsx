@@ -154,7 +154,7 @@ export function ChatScreen() {
 
     try {
       // Call the AI API
-      const response = await fetch('http://localhost:3000/api/ai/gemini', {
+      const response = await fetch('https://sih-8mrt.onrender.com/api/ai/gemini', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

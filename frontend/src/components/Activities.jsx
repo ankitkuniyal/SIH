@@ -97,7 +97,7 @@ export function Activities() {
       try {
         setActivitiesLoading(true);
         setActivitiesError(null);
-        const res = await fetch('http://localhost:3000/api/activity');
+        const res = await fetch('https://sih-8mrt.onrender.com/api/activity');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         // Map backend data into UI-friendly shape
@@ -439,7 +439,7 @@ export function Activities() {
               <div className="text-center py-10">
                 <p className="text-red-600 font-medium mb-3 text-sm">{t('failedToLoad') || 'Failed to load activities'}</p>
                 <Button 
-                  onClick={() => { setActivitiesLoading(true); setActivitiesError(null); (async ()=>{ try { const res = await fetch('http://localhost:3000/api/activity'); if(!res.ok) throw new Error(); const data = await res.json(); const mapped = (Array.isArray(data)?data:[]).map(a=>({ id: a._id || a.id, type: a.type || 'general', description: a.description || a.advisory || 'No description', date: a.date || a.createdAt || null, timestamp: timeAgo(a.date || a.createdAt) })); setActivities(mapped);} catch(e){ setActivitiesError(e.message);} finally{ setActivitiesLoading(false);} })(); }}
+                  onClick={() => { setActivitiesLoading(true); setActivitiesError(null); (async ()=>{ try { const res = await fetch('https://sih-8mrt.onrender.com/api/activity'); if(!res.ok) throw new Error(); const data = await res.json(); const mapped = (Array.isArray(data)?data:[]).map(a=>({ id: a._id || a.id, type: a.type || 'general', description: a.description || a.advisory || 'No description', date: a.date || a.createdAt || null, timestamp: timeAgo(a.date || a.createdAt) })); setActivities(mapped);} catch(e){ setActivitiesError(e.message);} finally{ setActivitiesLoading(false);} })(); }}
                   className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
                 >
                   {t('retry') || 'Retry'}

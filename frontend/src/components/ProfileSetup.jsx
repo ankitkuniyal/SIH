@@ -20,7 +20,7 @@ export function ProfileSetup({ onProfileSave, existingProfile }) {
     const fetchProfile = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:3000/api/profile');
+        const response = await fetch('https://sih-8mrt.onrender.com/api/profile');
         
         if (!response.ok) {
           throw new Error(`Failed to fetch profile: ${response.status}`);
