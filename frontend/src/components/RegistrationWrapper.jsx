@@ -1,5 +1,5 @@
 import React from 'react';
-import './auth/Registration/registration.css';
+import './auth/Registration/Registration.css';
 
 export function RegistrationWrapper({ children }) {
   return (
